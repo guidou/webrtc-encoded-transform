@@ -358,6 +358,7 @@ dictionary RTCEncodedVideoFrameMetadata {
     sequence&lt;unsigned long&gt; contributingSources;
     long long timestamp;    // microseconds
     unsigned long rtpTimestamp;
+    DOMHighResTimeStamp receiveTime;
     DOMString mimeType;
 };
 </pre>
@@ -371,7 +372,7 @@ dictionary RTCEncodedVideoFrameMetadata {
     <dd>
         <p>
             An identifier for the encoded frame, monotonically increasing in decode order. Its lower
-            16 bits match the frame_number of the AV1 Dependency Descriptor Header Extension defined in Appendix A of [[?AV1-RTP-SPEC]], if present.
+            16 bits match the frame_number of the AV1 Dependency Descriptor Header Extension defined in Appendix A of [[AV1-RTP-SPEC]], if present.
             Only present for received frames if the Dependency Descriptor Header Extension is present.
         </p>
     </dd>
@@ -381,7 +382,7 @@ dictionary RTCEncodedVideoFrameMetadata {
     <dd>
         <p>
             List of frameIds of frames this frame references.
-            Only present for received frames if the AV1 Dependency Descriptor Header Extension defined in Appendix A of [[?AV1-RTP-SPEC]] is present.
+            Only present for received frames if the AV1 Dependency Descriptor Header Extension defined in Appendix A of [[AV1-RTP-SPEC]] is present.
         </p>
     </dd>
     <dt>
@@ -432,6 +433,17 @@ dictionary RTCEncodedVideoFrameMetadata {
         </p>
     </dd>
     <dt>
+        <dfn dict-member>receiveTime</dfn> <span class=
+            "idlMemberType">DOMHighResTimeStamp</span>
+    </dt>
+    <dd>
+        <p>
+            For frames coming from an RTCRtpReceiver, represents the timestamp
+            of the last received packet used to produce this video frame. This
+            timestamp is relative to {{Performance}}.{{Performance/timeOrigin}}.
+        </p>
+    </dd>
+    <dt>
         <dfn dict-member>mimeType</dfn> <span class="idlMemberType">DOMString</span>
     </dt>
     <dd>
@@ -460,7 +472,7 @@ interface RTCEncodedVideoFrame {
 };
 </pre>
 
-### Constructor ### {#RTCEncodedVideoFrame-members}
+### Constructor ### {#RTCEncodedVideoFrame-constructor}
 <dl dfn-for="RTCEncodedVideoFrame" class="dictionary-members">
     <dt>
         <dfn for="RTCEncodedVideoFrame" method>constructor()</dfn>
@@ -506,11 +518,6 @@ interface RTCEncodedVideoFrame {
             {{RTCEncodedVideoFrameMetadata/mimeType}}.
             For <a href="https://w3c.github.io/webrtc-svc/">SVC</a>, each spatial layer
             is transformed separately.
-            <p class="note">
-              Since packetizers may drop certain elements, e.g. AV1 temporal delimiter OBUs,
-              the input to an receive-side transform may be different from the output of
-              a send-side transform.
-            </p>
             The following table gives a number of examples:
         </p>
         <table class="simple">
@@ -565,6 +572,11 @@ interface RTCEncodedVideoFrame {
                 </tr>
             </tbody>
         </table>
+        <p class="note">
+            Since packetizers may drop certain elements, e.g. AV1 temporal delimiter OBUs,
+            the input to an receive-side transform may be different from the output of
+            a send-side transform.
+        </p>
     </dd>
 </dl>
 
@@ -611,6 +623,7 @@ dictionary RTCEncodedAudioFrameMetadata {
     sequence&lt;unsigned long&gt; contributingSources;
     short sequenceNumber;
     unsigned long rtpTimestamp;
+    DOMHighResTimeStamp receiveTime;
     DOMString mimeType;
 };
 </pre>
@@ -665,6 +678,16 @@ dictionary RTCEncodedAudioFrameMetadata {
         </p>
     </dd>
     <dt>
+        <dfn dict-member>receiveTime</dfn> <span class=
+            "idlMemberType">DOMHighResTimeStamp</span>
+    </dt>
+    <dd>
+        <p>
+            For frames coming from an RTCRtpReceiver, represents the timestamp
+            of the last received packet used to produce this audio frame. This
+            timestamp is relative to {{Performance}}.{{Performance/timeOrigin}}.
+        </p>
+    <dt>
         <dfn dict-member>mimeType</dfn> <span class="idlMemberType">DOMString</span>
     </dt>
     <dd>
@@ -689,7 +712,7 @@ interface RTCEncodedAudioFrame {
 };
 </pre>
 
-### Constructor ### {#RTCEncodedAudioFrame-members}
+### Constructor ### {#RTCEncodedAudioFrame-constructor}
 <dl dfn-for="RTCEncodedAudioFrame" class="dictionary-members">
     <dt>
         <dfn for="RTCEncodedAudioFrame" method>constructor()</dfn>
